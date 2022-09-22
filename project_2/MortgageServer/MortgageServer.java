@@ -11,6 +11,10 @@ public class MortgageServer{
 		
 		System.out.println("Hello Server");
 		SocketServer s = new SocketServer();
-		s.runServer();
+		try {
+			s.runServer();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }

@@ -1,4 +1,8 @@
 import java.net.*;
+
+import org.checkerframework.checker.mustcall.qual.MustCall;
+import org.checkerframework.checker.mustcall.qual.Owning;
+
 import java.io.*;
 /*
  * This class is designed to run a Thread. It implements Runnable to do so. It will
@@ -11,7 +15,7 @@ import java.io.*;
 public class MortgageRunnable implements Runnable{
 	
 	//We will use this object to communicate to and from the client
-	protected Socket clientSocket = null;
+	protected @Owning @MustCall() Socket clientSocket = null;
 	
 	private Mortgage m;
 
@@ -19,8 +23,9 @@ public class MortgageRunnable implements Runnable{
 		clientSocket is the connection we have accepted from the client and
 		we have assigned it locally to a Socket object.
 	*/
-	public MortgageRunnable (Socket clientSocket){
-		this.clientSocket = clientSocket;
+	
+	public MortgageRunnable (@Owning Socket clientSocket){
+		this.clientSocket = clientSocket;					//Same error of incompatible types in assignment being thrown.
 	}
 
 	/*
@@ -73,9 +78,10 @@ public class MortgageRunnable implements Runnable{
 			To send data back we use the PrintWriter
 			out.println("Thanks for the message!!!");
 			*/
-
+			clientSocket.close();
 		}catch(IOException e){
 			e.printStackTrace();
+
 		}
 	}
 }	
