@@ -18,6 +18,8 @@
 import java.io.*;
 import java.net.*;
 
+import org.checkerframework.checker.mustcall.qual.MustCall;
+
 /**
  * 
  */
@@ -38,50 +40,64 @@ public class server
     public void run()	throws Exception{
     	//A new ServerSocket is built and it will open up on port 2000
     	//NOTE: when using MacOS, your port must be over 1024 to avoid access privilage issues.
-    	ServerSocket SRVSOCK = new ServerSocket(2000);
+    	@MustCall("close") ServerSocket SRVSOCK = new ServerSocket(2000);
+		try {
 
-    	/* A new Socket object is built and the accept() method on ServerSocket is called.
-    	 * The return Socket object is going to be assigned to SOCK.
-    	 */
-    	Socket SOCK = SRVSOCK.accept();
+			/* A new Socket object is built and the accept() method on ServerSocket is called.
+			* The return Socket object is going to be assigned to SOCK.
+			*/
+			@MustCall("close") Socket SOCK = SRVSOCK.accept();
+			try {
+					/*
+					* InputStreamReader object is created called IR. and the argument is going to
+					* be the getInputStream() return value from the Socket object. Will be passed
+					* to the InputStreamReader's constructor.
+					*/
+					InputStreamReader IR = new InputStreamReader(SOCK.getInputStream());
+					
+				/*
+				* An instantiation of BufferedReader object is created called BR. The
+				* InputStreamReader object is then passed as an argument.
+				*/
+				BufferedReader BR = new BufferedReader(IR);
+				
+				/*
+				* This String will store the returned value from calling the readLine() method
+				* on BufferedReader object.
+				*/
+				String MESSAGE = BR.readLine();
+				//This String will then be printed. Showing what I got from the client and
+				//displayed in the console where the Server is running.
+				System.out.println(MESSAGE);
+				
+				/*
+				*	If a message is returned we open up the conditional. An instance of the
+				*	PrintStream class is created that passes the returned value of getOutputStream()
+				*	from the SOCK object into PrintStream's Constructor.
+				*	Finally, the println() method on PS is called passing a piece of text as an
+				*	argument.
+				*/
 
-    	/*
-		 * InputStreamReader object is created called IR. and the argument is going to
-		 * be the getInputStream() return value from the Socket object. Will be passed
-		 * to the InputStreamReader's constructor.
-    	 */
-    	InputStreamReader IR = new InputStreamReader(SOCK.getInputStream());
+				if(MESSAGE != null){
+					PrintStream PS = new PrintStream(SOCK.getOutputStream());
+					/* This line will be sent to the client and the person running the client
+					* will see this message.
+					*/
+					PS.println("MESSAGE received");
+				}
+		} catch (Exception e) {
+			System.out.print(e.getMessage());
+		}
+		finally{
+			SOCK.close();
+		}
+	} catch (Exception e) {
+		System.out.print(e.getMessage());
+	}
+	finally{
+		SRVSOCK.close();
+	}
 
-    	/*
-		 * An instantiation of BufferedReader object is created called BR. The
-		 * InputStreamReader object is then passed as an argument.
-    	 */
-    	BufferedReader BR = new BufferedReader(IR);
-
-    	/*
-    	 * This String will store the returned value from calling the readLine() method
-    	 * on BufferedReader object.
-    	 */
-    	String MESSAGE = BR.readLine();
-    	//This String will then be printed. Showing what I got from the client and
-    	//displayed in the console where the Server is running.
-    	System.out.println(MESSAGE);
-
-    	/*
-		 *	If a message is returned we open up the conditional. An instance of the
-		 *	PrintStream class is created that passes the returned value of getOutputStream()
-		 *	from the SOCK object into PrintStream's Constructor.
-		 *	Finally, the println() method on PS is called passing a piece of text as an
-		 *	argument.
-    	 */
-
-    	if(MESSAGE != null){
-    		PrintStream PS = new PrintStream(SOCK.getOutputStream());
-    		/* This line will be sent to the client and the person running the client
-    		 * will see this message.
-    		 */
-    		PS.println("MESSAGE received");
-    	}
     }
 }
 

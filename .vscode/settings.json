@@ -1,0 +1,11 @@
+{
+    "java.project.referencedLibraries": [
+        "lib/**/*.jar",
+        "/home/randall/Documents/checker-framework-3.25.0/checker/dist/checker.jar",
+        "/home/randall/Documents/checker-framework-3.25.0/checker/dist/checker-javadoc.jar",
+        "/home/randall/Documents/checker-framework-3.25.0/checker/dist/checker-qual.jar",
+        "/home/randall/Documents/checker-framework-3.25.0/checker/dist/checker-source.jar",
+        "/home/randall/Documents/checker-framework-3.25.0/checker/dist/checker-util.jar",
+        "/home/randall/Documents/checker-framework-3.25.0/checker/dist/javac.jar"
+    ]
+}
